@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LangChain and Zapier Natural Language Actions: A Game-Changing Collaboration!</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/85e6ebb8cd.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="../styles.css">
+</head>
+
+<body>
+  <header>
+    <nav class="navbar">
+      <a class="back-to-homepage" href="https://ayushmore.github.io/">Back to Homepage</a>
+    </nav>
+  </header>
+  <main>
+    <h1>LangChain and Zapier Natural Language Actions: A Game-Changing Collaboration!</h1>
+    <p class="date"><strong>March 21, 2023</strong></p>
+    <br>
+    <br>
+
+    <h2>TLDR</h2>
+    <p>With LangChain's powerful framework for building applications with large language models easily in collaboration
+      with Zapier and the thousands of app integrations it has, there are countless of exciting opportunities that can
+      be developed with this! Check out the <a
+        href="https://twitter.com/yushnmore/status/1638421650008944640" target="_blank">tweet</a>!
+      <br>
+      <br>
+
+    <h2>Introducing LangChain + Zapier</h2>
+    <p>On March 16, 2023, LangChain announced their <a
+        href="https://blog.langchain.dev/langchain-zapier-nla/" target="_blank">collaboration</a> with Zapier Natural Language Actions
+      (NLA), which
+      enables users to integrate cross-communication and natural language to automate tasks outside of a chatbot. With
+      this integration, users have access to Zapier's 5k+ apps and 20k+ actions through a natural language API
+      interface. This is an exciting development that provides limitless possibilities for LangChain agents and makes
+      automating cross-communication tasks much easier. While LangChain provides access to the model and its
+      capabilities, Zapier NLA handles all the underlying API authentication and translation from natural language to
+      API calls.</p>
+    <br>
+
+    <p>To demonstrate the power of LangChain and Zapier NLA, I automate the process of generating and publishing a tweet
+      through my personal Twitter account. This is just one of many applications you can use!
+    </p>
+    <br>
+    <br>
+
+
+
+    <h2>Setting Up</h2>
+    <p>I'll go over the steps on how I was able to set this up and running in less than 10 minutes and how you can as
+      well! This was all run within a Jupyter Notebook for a quick demonstration purpose.</p>
+    <br>
+
+    <h3>1. Set up a Conda environment</h3>
+    <br>
+    <p>Setting up a Conda environment is essential for ensuring that your project is isolated and reproducible,
+      especially when working with large language models like OpenAI's GPT and frameworks like LangChain. It allows you
+      to manage dependencies, specify exact package versions, and avoid conflicts between packages. If you do not have
+      conda installed on your machine, you can follow the <a
+        href="https://conda.io/projects/conda/en/latest/user-guide/install/index.html" target="_blank">installation documentation</a>.
+      For our purposes, we
+      need the LangChain and OpenAI packages in our environment.</p>
+    <br>
+    <pre style="background-color: #1E1E1E; color: #EEE; padding: 10px;">
+conda create -n zapier-demo
+conda activate zapier-demo
+pip install openai
+pip install langchain
+</pre>
+    <br>
+    <p>To keep my files organized, I created a directory called "zapier-demo" and opened it in Visual Studio (or
+      whichever your preferred IDE is). There, I added a new Jupyter Notebook. </p>
+    <br>
+
+    <h3>2. Access API Keys and create Zapier action</h3>
+    <br>
+    <p>You will need two API keys for this to work and I have provided links on how to access them - one from <a href="https://www.onmsft.com/how-to/how-to-get-an-openai-api-key/" target="_blank">OpenAI</a> and the other from <a href="https://nla.zapier.com/get-started/" target="_blank">Zapier</a>. For Zapier, you will need to click on "Setup actions" to get access to your API key.</p>
+    <br>
+    <p>For my demonstration, I selected "Twitter: Create Tweet" and linked it with my personal account. Now, to use the Natural Language Action functionality, I selected "Have AI Guess", which takes my raw input and interprets what action to do!</p>
+    <br>
+    <div style="text-align:center;">
+  <img src="zapier-setup-actions.png" alt="Zapier Setup Actions" style="width:50%;">
+</div>
+    <br>
+
+      <h3>3. Coding in Jupyter Notebook</h3><br>
+    <p>To get started, we will be coding in our Jupyter Notebook. First, we need to import the necessary packages that will be used throughout the project. These packages include <code>OpenAI</code> from <code>langchain.llms</code>, <code>initialize_agent</code> and <code>ZapierToolkit</code> from <code>langchain.agents.agent_toolkits</code>, <code>ZapierNLAWrapper</code> from <code>langchain.utilities.zapier</code>, and <code>os</code>.</p><br>
+    <pre style="background-color: #1E1E1E; color: #EEE; padding: 10px;">
+from langchain.llms import OpenAI
+from langchain.agents import initialize_agent
+from langchain.agents.agent_toolkits import ZapierToolkit
+from langchain.utilities.zapier import ZapierNLAWrapper
+import os
+</pre>
+      <br>
+    <p>Next, we will set the environment variables for OPENAI_API_KEY and ZAPIER_NLA_API_KEY using the os.environ method. These variables will store our OpenAI and Zapier API keys respectively. Replace the "&lt;key&gt;" with your actual API key. </p><br>
+    <pre style="background-color: #1E1E1E; color: #EEE; padding: 10px;">
+os.environ["OPENAI_API_KEY"] = os.environ.get("OPENAI_API_KEY", "&lt;your_openai_key&gt;")
+os.environ["ZAPIER_NLA_API_KEY"] = os.environ.get("ZAPIER_NLA_API_KEY", "&lt;your_zapier_nla_key&gt;")
+</pre>
+    <br>
+      <p>After that, we will initialize the <code>llm</code> (<code>OpenAI</code>), <code>zapier</code> (<code>ZapierNLAWrapper</code>), and <code>toolkit</code> (<code>ZapierToolkit</code>) objects. These objects are used to interact with the <code>OpenAI</code> and <code>Zapier</code> APIs.</p><br>
+    <p>We then will initialize the <code>agent</code> object, which is responsible for generating descriptions of Zapier automation actions. The <code>initialize_agent</code> function takes three arguments: <code>toolkit.get_tools()</code> (which retrieves a list of available tools from the <code>toolkit</code> instance), <code>llm</code> (the <code>OpenAI</code> instance that provides the language model for generating the descriptions), <code>agent="zero-shot-react-description"</code> (which specifies the type of agent to initialize), and <code>verbose=True</code> (which enables verbose logging output for the agent initialization process).</p><br>
+    <pre style="background-color: #1E1E1E; color: #EEE; padding: 10px;">
+llm = OpenAI(temperature=0)
+zapier = ZapierNLAWrapper()
+toolkit = ZapierToolkit.from_zapier_nla_wrapper(zapier)
+agent = initialize_agent(toolkit.get_tools(), llm, agent="zero-shot-react-description", verbose=True)
+</pre>
+<br>
+      <p>Finally, we will set the <code>prompt</code> variable, which contains a prompt for generating a tweet showcasing the LangChain and Zapier integration. This tweet will mention both LangChain and Zapier Twitter handles.</p><br>
+    <pre style="background-color: #1E1E1E; color: #EEE; padding: 10px;">
+prompt = ("Craft a captivating tweet showcasing how this tweet was effortlessly generated " \
+          "using @LangChainAI and @zapier integration, all within just 10 minutes of " \
+          "exploring the documentation! Be sure to mention @LangChainAI and @zapier in your tweet.")
+</pre>
+<br>
+      <p>Lasty, we will run the <code>agent</code> using the <code>agent.run(prompt)</code> command to generate a response to the prompt. The agent will generate a description of a Zapier automation action in the form of a tweet, showcasing the capabilities of LangChain and Zapier integration.</p><br>
+    <pre style="background-color: #1E1E1E; color: #EEE; padding: 10px;">
+agent.run(prompt)
+</pre>
+<br>
+    <p>Putting it all together, this is what the entire thing looks like!</p><br>
+    <div style="text-align:center;">
+  <img src="zapier-code-ss.png" alt="Zapier Code Screenshot" style="width:75%;">
+</div>
+    <br>
+
+    
+    <h2>Overall Thoughts</h2>
+<p>In conclusion, I found the integration between LangChain and Zapier to be incredibly easy and quick to use. With just a few lines of code, I was able to automate the process of generating and publishing a tweet through my personal Twitter account. The possibilities for using this integration are endless, and I'm excited to play around with it more, especially with <a href="https://zapier.com/apps/hugging-face/integrations">Hugging Face integrations</a>. If you're interested in trying it out for yourself, be sure to check out the <a href="https://langchain.readthedocs.io/en/latest/modules/utils/examples/zapier.html">LangChain and Zapier NLA documentation</a>!</p><br>
+
+<video width="100%" height="auto" controls>
+  <source src="videos/zapier-demo-vid.mp4" type="video/mp4">
+  Sorry, your browser doesn't support embedded videos.
+</video>
+
+    
+  </main>
+</body>
+
+</html>
